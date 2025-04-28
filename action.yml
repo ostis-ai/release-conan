@@ -115,4 +115,3 @@ runs:
       with:
         name: ${{ inputs.name }}-${{ matrix.config.os }}-${{ inputs.version }}
         path: ${{ inputs.directory }}/build/Release/${{ inputs.name }}-*.tar.gz
-      shell: bash
