@@ -24,6 +24,14 @@ The CMake preset name used to configure the component build.
 
 The CMake preset name used to build the component.
 
+### `conan-username` (required)
+
+The Conan username required for authenticating with the target Conan remote repository (`ostis-ai`).
+
+### `conan-api-key` (required)
+
+The Conan API key (or password) corresponding to the `conan-username` for authentication with the `ostis-ai` remote.
+
 ## Usage
 
 To use this action in your workflow, include the following example configuration. Ensure you have the necessary secrets (`CONAN_USERNAME`, `CONAN_API_KEY`) configured in your repository or organization settings.
@@ -50,9 +58,8 @@ jobs:
           directory: path/to/your/component
           configure-preset: release-conan
           build-preset: release
-        env:
-          CONAN_USERNAME: ${{ secrets.CONAN_USERNAME }}
-          CONAN_API_KEY: ${{ secrets.CONAN_API_KEY }}
+          conan-username: ${{ secrets.CONAN_USERNAME }}
+          conan-api-key: ${{ secrets.CONAN_API_KEY }}
 
 # The composite action uploads the archive artifacts automatically.
 # They will appear under the 'release' job artifacts
