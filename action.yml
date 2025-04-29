@@ -67,8 +67,14 @@ runs:
         pipx install conan
       shell: bash
 
-    - name: Install Build Tools
+    - name: Install Build Tools (Linux)
+      if: runner.os == 'Linux'
       run: sudo apt install -y build-essential ninja-build
+      shell: bash
+
+    - name: Install Build Tools (macOS)
+      if: runner.os == 'macOS'
+      run: brew install ninja
       shell: bash
 
     - name: Configure Conan Remote Repository
