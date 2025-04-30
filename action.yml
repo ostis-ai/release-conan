@@ -121,6 +121,14 @@ runs:
         cpack -G TGZ
       shell: bash
 
+    - name: Get Release Info by Tag
+      id: get_release
+      uses: joutvhu/get-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.event.inputs.tag }}
+
     - name: Get Archive Filename
       id: get_archive_filename
       run: |
@@ -136,6 +144,6 @@ runs:
       env:
         GITHUB_TOKEN: ${{ github.token }}
       with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        upload_url: ${{ steps.get_release.outputs.upload_url }}
         asset_path: ${{ steps.get_archive_filename.outputs.archive_path }}
         asset_name: ${{ steps.get_archive_filename.outputs.archive_name }}

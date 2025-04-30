@@ -79,17 +79,19 @@ jobs:
     -   `CONAN_USERNAME`
     -   `CONAN_API_KEY`
 
-## Outputs
+## What the Action Does
 
-This action performs the following actions:
-
-1.  Builds** the component using CMake presets within the specified `directory`.
-2.  (Optional) If `inputs.create-conan-package` is `true` (default):
-    *   Exports the built component package (`<name>/<version>`) locally using `conan export-pkg`.
-    *   Uploads the package to the configured Conan remote (`ostis-ai`) using `conan upload`. Requires valid `conan-username` and `conan-api-key`.
-3.  Creates a `.tar.gz` archive of the built component using CPack within the build directory (`<directory>/build/Release`). The archive is named `<name>-<os>-<version>.tar.gz`.
-4.  Uploads the `.tar.gz` archive as a GitHub Actions artifact. The artifact name follows the pattern: `<name>-<os>-<version>`.
-5.  Uploads the `.tar.gz` archive to the assets of a GitHub Release corresponding to the tag specified by `inputs.version`. Requires `GITHUB_TOKEN` (automatically available) and write permissions for contents.
+1.  Checks out the repository code.
+2.  Sets up caches (CCache, Conan, Apt), Python, Conan, CMake, and build tools (Ninja, g++/clang).
+3.  Configures the specified Conan remote (`ostis-ai`).
+4.  Installs C++ dependencies using `conan install . --build=missing` within the component `directory`.
+5.  Builds the component using the specified CMake configure and build presets.
+6.  (Optional) Create Conan package if `inputs.create-conan-package` is `'true'`:
+    *   Logs into the Conan remote (`ostis-ai`) using the provided credentials.
+    *   Exports the built component package (`<name>/<version>@<user>/stable`) locally using `conan export-pkg`.
+    *   Uploads the package and its recipe to the `ostis-ai` remote using `conan upload`.
+7.  Creates archive via `cpack -G TGZ` within the build directory (`<directory>/build/Release`) to create a `.tar.gz` archive. The action finds the archive matching the pattern `<name>-*.tar.gz`.
+8. Uploads the `.tar.gz` archive found in the previous step to the specified GitHub Release URL as a release asset. The asset name on GitHub will be the filename of the archive.
 
 ## License
 
