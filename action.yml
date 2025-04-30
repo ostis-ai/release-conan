@@ -16,6 +16,9 @@ inputs:
   build-preset: 
     description: Preset to build the component
     required: true
+  create-conan-package:
+    description: Flag to create a Conan package
+    default: true
   conan-username:
     description: Conan username for library repository
     required: true
@@ -82,7 +85,6 @@ runs:
         cd ${{ inputs.directory }}
         conan profile detect
         conan remote add ostis-ai https://conan.ostis.net/artifactory/api/conan/ostis-ai-library/
-        conan remote login ostis-ai ${{ inputs.conan-username }} -p ${{ inputs.conan-api-key }}
       shell: bash
 
     - name: Install C++ Dependencies
@@ -99,12 +101,15 @@ runs:
       shell: bash
 
     - name: Export Component
+      if: ${{ inputs.create-conan-package }}
       run: |
         cd ${{ inputs.directory }}
+        conan remote login ostis-ai ${{ inputs.conan-username }} -p ${{ inputs.conan-api-key }}
         conan export-pkg .
       shell: bash
 
     - name: Upload to Conan remote
+      if: ${{ inputs.create-conan-package }}
       run: |
         cd ${{ inputs.directory }}
         conan upload ${{ inputs.name }}/${{ inputs.version }} -r ostis-ai
@@ -120,4 +125,12 @@ runs:
       uses: actions/upload-artifact@v4
       with:
         name: ${{ inputs.name }}-${{ matrix.config.os }}-${{ inputs.version }}
-        path: ${{ inputs.directory }}/build/Release/${{ inputs.name }}-*.tar.gz
+        path: ${{ inputs.directory }}/build/Release/${{ inputs.name }}-${{ matrix.config.os }}-${{ inputs.version }}.tar.gz
+
+    - name: Release Archive
+      run: |
+        gh release upload ${{ inputs.version }} \
+          ${{ inputs.directory }}/build/Release/${{ inputs.name }}-${{ matrix.config.os }}-${{ inputs.version }}.tar.gz
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+      shell: bash

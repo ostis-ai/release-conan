@@ -24,6 +24,10 @@ The CMake preset name used to configure the component build.
 
 The CMake preset name used to build the component.
 
+### `create-conan-package` (optional)
+
+Flag to control whether to create and upload a Conan package to the remote repository. By default, it is true.
+
 ### `conan-username` (required)
 
 The Conan username required for authenticating with the target Conan remote repository (`ostis-ai`).
@@ -58,6 +62,7 @@ jobs:
           directory: path/to/your/component
           configure-preset: release-conan
           build-preset: release
+          # create-conan-package: true # Optional: defaults to true
           conan-username: ${{ secrets.CONAN_USERNAME }}
           conan-api-key: ${{ secrets.CONAN_API_KEY }}
 
@@ -76,10 +81,15 @@ jobs:
 
 ## Outputs
 
-This action produces the following outputs:
+This action performs the following actions:
 
-1.  Uploads the built component package (`<name>/<version>`) to the configured Conan remote (`ostis-ai`).
-2.  Uploads `.tar.gz` archives (created using CPack) for each operating system build as GitHub Actions artifacts. The artifact names will follow the pattern: `<name>-<os>-<version>`.
+1.  Builds** the component using CMake presets within the specified `directory`.
+2.  (Optional) If `inputs.create-conan-package` is `true` (default):
+    *   Exports the built component package (`<name>/<version>`) locally using `conan export-pkg`.
+    *   Uploads the package to the configured Conan remote (`ostis-ai`) using `conan upload`. Requires valid `conan-username` and `conan-api-key`.
+3.  Creates a `.tar.gz` archive of the built component using CPack within the build directory (`<directory>/build/Release`). The archive is named `<name>-<os>-<version>.tar.gz`.
+4.  Uploads the `.tar.gz` archive as a GitHub Actions artifact. The artifact name follows the pattern: `<name>-<os>-<version>`.
+5.  Uploads the `.tar.gz` archive to the assets of a GitHub Release corresponding to the tag specified by `inputs.version`. Requires `GITHUB_TOKEN` (automatically available) and write permissions for contents.
 
 ## License
 
