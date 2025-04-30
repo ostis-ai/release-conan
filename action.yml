@@ -125,7 +125,7 @@ runs:
       id: get_release
       uses: joutvhu/get-release@v1
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ github.token }}
       with:
         tag_name: ${{ github.event.inputs.tag }}
 
