@@ -127,10 +127,11 @@ runs:
         name: ${{ inputs.name }}-${{ matrix.config.os }}-${{ inputs.version }}
         path: ${{ inputs.directory }}/build/Release/${{ inputs.name }}-${{ matrix.config.os }}-${{ inputs.version }}.tar.gz
 
-    - name: Release Archive
-      run: |
-        gh release upload ${{ inputs.version }} \
-          ${{ inputs.directory }}/build/Release/${{ inputs.name }}-${{ matrix.config.os }}-${{ inputs.version }}.tar.gz
+    - name: Upload Release Asset
+      uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ github.token }}
-      shell: bash
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ${{ inputs.directory }}/build/Release/${{ inputs.name }}-${{ matrix.config.os }}-${{ inputs.version }}.tar.gz
+        asset_name: ${{ inputs.name }}-${{ matrix.config.os }}-${{ inputs.version }}.tar.gz
