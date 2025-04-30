@@ -147,3 +147,4 @@ runs:
         upload_url: ${{ steps.get_release.outputs.upload_url }}
         asset_path: ${{ steps.get_archive_filename.outputs.archive_path }}
         asset_name: ${{ steps.get_archive_filename.outputs.archive_name }}
+        asset_content_type: application/gzip
