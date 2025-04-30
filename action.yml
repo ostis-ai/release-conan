@@ -101,7 +101,7 @@ runs:
       shell: bash
 
     - name: Export Component
-      if: ${{ inputs.create-conan-package }}
+      if: ${{ inputs.create-conan-package == 'true' }}
       run: |
         cd ${{ inputs.directory }}
         conan remote login ostis-ai ${{ inputs.conan-username }} -p ${{ inputs.conan-api-key }}
@@ -109,7 +109,7 @@ runs:
       shell: bash
 
     - name: Upload to Conan remote
-      if: ${{ inputs.create-conan-package }}
+      if: ${{ inputs.create-conan-package == 'true' }}
       run: |
         cd ${{ inputs.directory }}
         conan upload ${{ inputs.name }}/${{ inputs.version }} -r ostis-ai
