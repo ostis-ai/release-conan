@@ -127,7 +127,7 @@ runs:
       env:
         GITHUB_TOKEN: ${{ github.token }}
       with:
-        tag_name: ${{ github.event.inputs.tag }}
+        tag_name: ${{ inputs.version }}
 
     - name: Get Archive Filename
       id: get_archive_filename
